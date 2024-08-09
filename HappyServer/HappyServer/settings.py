@@ -39,18 +39,64 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'happyserverapp',
-    'rest_framework',
     'phonenumber_field',
+    # google authentication
+    'django.contrib.sites',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.twitter',,
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'rest_framework.authtoken',
+    'corsheaders',
 ]
+
+
+SITE_ID = 1
+
+REST_USE_JWT = True
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+)
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+LOGIN_REDIRECT_URL = '/'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'HappyServer.urls'
@@ -126,6 +172,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": "HappyCoupleSolution",
@@ -139,7 +187,7 @@ JAZZMIN_SETTINGS = {
     "site_brand_classes":"d-none",
 
     # Logo to use for your site, must be present in static files, used for brand on top left
-    "site_logo": "logo_images/HAppyCoupleLOGO.svg",
+    "site_logo": "",
 
     # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
     "login_logo": None,

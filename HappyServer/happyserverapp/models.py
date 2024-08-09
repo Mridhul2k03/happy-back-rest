@@ -19,6 +19,7 @@ class Product(models.Model):
     precautions = models.JSONField()  # Store precautions as a list
     faqs = models.JSONField()  # Store FAQs as a list of dicts
     status = models.BooleanField(default=True)
+    doctor_permission = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -51,8 +52,54 @@ class DoctorsInfo(models.Model):
 
 
 
-class SliderImagesHome(models.Model):
-    image1=models.ImageField(upload_to='slider_home_img_1')
+# class SliderImagesHome(models.Model):
+#     image1=models.ImageField(upload_to='slider_home_img_1')
     
-        
+class OrderModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    email=models.EmailField(max_length=254)
+    phone=PhoneNumberField()
+    address=models.TextField()
+    pincode=models.CharField(max_length=6)
+    landmark=models.CharField( max_length=100)
+    STATUS_CHOICES=[
+        ('pending','pending'),
+        ('shipped','shipped'),
+        ('delivered','delivered'),
+        ('cancelled','cancelled'),
+    ]
+    status=models.CharField(max_length=50,choices=STATUS_CHOICES)
+    date=models.DateTimeField(auto_now_add=True)
+    PERMISSION_STATUS=(
+        ('pending','pending'),
+        ('accepted','accepted'),
+        ('rejected','rejected'),
+    )
+    permission = models.CharField(max_length=50,choices=PERMISSION_STATUS,default='accepted')
+    
+
+class DoctorPermissonModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(OrderModel, on_delete=models.CASCADE)
+    PERMISSION_STATUS=(
+        ('pending','pending'),
+        ('accepted','accepted'),
+        ('rejected','rejected'),
+    )
+    permission = models.CharField(max_length=50,choices=PERMISSION_STATUS,default='pending')
+    
+    
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    session_key=models.CharField(max_length=50)
+    created_at=models.DateTimeField(auto_now_add=True)
+
+    
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+
 
